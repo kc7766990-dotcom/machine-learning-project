@@ -1,0 +1,272 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+
+# STUDENT ATTENDANCE DATA
+
+attendance = np.array([
+    [90, 85, 95, 88],
+    [75, 80, 70, 78],
+    [95, 92, 98, 96],
+    [65, 70, 72, 68],
+    [85, 88, 90, 87]
+])
+
+subjects = ["Python", "Java", "SQL", "ML"]
+
+
+
+# 1. AVERAGE ATTENDANCE OF EACH STUDENT
+
+student_average = np.mean(attendance, axis=1)
+
+print("1. Average Attendance of Each Student:")
+
+for i, avg in enumerate(student_average):
+    print(f"Student {i + 1}: {avg:.2f}%")
+
+
+
+# 2. AVERAGE ATTENDANCE OF EACH SUBJECT
+
+
+subject_average = np.mean(attendance, axis=0)
+
+print("\n2. Average Attendance of Each Subject:")
+
+for subject, avg in zip(subjects, subject_average):
+    print(f"{subject}: {avg:.2f}%")
+
+
+
+# 3. HIGHEST ATTENDANCE IN EACH SUBJECT
+
+
+highest_attendance = np.max(attendance, axis=0)
+
+print(" Highest Attendance in Each Subject:")
+
+for subject, highest in zip(subjects, highest_attendance):
+    print(f"{subject}: {highest}%")
+
+
+
+# 4. LOWEST ATTENDANCE IN EACH SUBJECT
+
+
+lowest_attendance = np.min(attendance, axis=0)
+
+print(" Lowest Attendance in Each Subject:")
+
+for subject, lowest in zip(subjects, lowest_attendance):
+    print(f"{subject}: {lowest}%")
+
+
+# 5. STUDENTS WITH AVERAGE ABOVE 80%
+
+
+students_above_80 = np.where(student_average > 80)[0]
+
+print(" Students Having Average Attendance Above 80%:")
+
+for index in students_above_80:
+    print(
+        f"Student {index + 1}: "
+        f"{student_average[index]:.2f}%"
+    )
+
+
+
+# 6. STUDENT WITH HIGHEST AVERAGE
+
+
+highest_student_index = np.argmax(student_average)
+
+print(" Student With Highest Average Attendance:")
+
+print(
+    f"Student {highest_student_index + 1}: "
+    f"{student_average[highest_student_index]:.2f}%"
+)
+
+
+
+# 7. STANDARD DEVIATION
+
+
+overall_std = np.std(attendance)
+
+print(" Overall Standard Deviation:")
+
+print(f"{overall_std:.2f}%")
+
+
+# Subject-wise Standard Deviation
+
+subject_std = np.std(attendance, axis=0)
+
+print("Subject-wise Standard Deviation:")
+
+for subject, std in zip(subjects, subject_std):
+    print(f"{subject}: {std:.2f}%")
+
+# 8. ELIGIBLE / NOT ELIGIBLE
+
+status = np.where(
+    student_average >= 75,
+    "Eligible",
+    "Not Eligible"
+)
+
+print(" Student Eligibility:")
+
+for i, value in enumerate(status):
+    print(f"Student {i + 1}: {value}")
+
+
+# 9. CONVERT DATA INTO PANDAS DATAFRAME
+
+df = pd.DataFrame(
+    attendance,
+    columns=subjects
+)
+
+print("\n9. Pandas DataFrame:")
+
+print(df)
+
+
+
+# 10. ADD AVERAGE AND STATUS COLUMN
+
+
+df["Average"] = df[subjects].mean(axis=1)
+
+df["Status"] = np.where(
+    df["Average"] >= 75,
+    "Eligible",
+    "Not Eligible"
+)
+
+print("\n10. Final DataFrame:")
+
+print(df)
+
+# 11. BAR CHART - SUBJECT AVERAG
+
+plt.figure(figsize=(8, 5))
+
+plt.bar(subjects, subject_average)
+
+plt.xlabel("Subjects")
+plt.ylabel("Average Attendance (%)")
+
+plt.title("Average Attendance by Subject")
+
+plt.ylim(0, 100)
+
+plt.grid(axis="y", linestyle="--", alpha=0.5)
+
+plt.show()
+
+
+# 12. BAR CHART - STUDENT AVERAGE
+
+
+students = [
+    "Student 1",
+    "Student 2",
+    "Student 3",
+    "Student 4",
+    "Student 5"
+]
+
+plt.figure(figsize=(8, 5))
+
+plt.bar(students, student_average)
+
+plt.xlabel("Students")
+plt.ylabel("Average Attendance (%)")
+
+plt.title("Average Attendance by Student")
+
+plt.ylim(0, 100)
+
+plt.grid(axis="y", linestyle="--", alpha=0.5)
+
+plt.show()
+
+# 13. GROUPED BAR CHART
+#    ALL SUBJECTS FOR EACH STUDENT
+
+
+x = np.arange(len(students))
+
+width = 0.2
+
+plt.figure(figsize=(10, 6))
+
+plt.bar(
+    x - 1.5 * width,
+    attendance[:, 0],
+    width,
+    label="Python"
+)
+
+plt.bar(
+    x - 0.5 * width,
+    attendance[:, 1],
+    width,
+    label="Java"
+)
+
+plt.bar(
+    x + 0.5 * width,
+    attendance[:, 2],
+    width,
+    label="SQL"
+)
+
+plt.bar(
+    x + 1.5 * width,
+    attendance[:, 3],
+    width,
+    label="ML"
+)
+
+plt.xlabel("Students")
+
+plt.ylabel("Attendance (%)")
+
+plt.title("Student-wise Subject Attendance")
+
+plt.xticks(x, students)
+
+plt.ylim(0, 100)
+
+plt.legend()
+
+plt.grid(axis="y", linestyle="--", alpha=0.5)
+
+plt.show()
+
+
+
+print("\nFinal DataFrame:")
+print(df)
+
+print("\nHighest Average Attendance:")
+
+print(
+    f"Student {highest_student_index + 1} "
+    f"with {highest_student_average:.2f}%"
+)
+
+print("\nStudents Above 80%:")
+
+for index in students_above_80:
+    print(f"Student {index + 1}")
+
+print("\nAnalysis Completed Successfully!")
