@@ -1,0 +1,283 @@
+ySQL  localhost:3306 ssl  himanshu  SQL > USE himanshu;
+Default schema set to `himanshu`.
+Fetching global names, object names from `himanshu` for auto-completion... Press ^C to stop.
+ MySQL  localhost:3306 ssl  himanshu  SQL > SHOW TABLES;
++--------------------+
+| Tables_in_himanshu |
++--------------------+
+| banking_data       |
++--------------------+
+1 row in set (0.0024 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > CREATE TABLE IF NOT EXISTS customers (
+                                         ->     customer_id INT PRIMARY KEY,
+
+                                         ->     customer_name VARCHAR(100),
+                                         ->     city VARCHAR(50),
+                                         ->     state VARCHAR(50),
+                                         ->     phone VARCHAR(15),
+                                         ->     status VARCHAR(20)
+                                         -> );
+Query OK, 0 rows affected (0.0300 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > INSERT INTO customers
+                                         -> (customer_id, customer_name, city, state, phone, status)
+                                         -> VALUES
+                                         -> (101, 'Rahul Sharma', 'Delhi', 'Delhi', '9876543210', 'ACTIVE'),
+                                         -> (102, 'Amit Kumar', 'Lucknow', 'UP', '9876543211', 'ACTIVE'),
+                                         -> (103, 'Priya Singh', 'Delhi', 'Delhi', '9876543212', 'ACTIVE'),
+                                         -> (104, 'Neha Verma', 'Kanpur', 'UP', '9876543213', 'INACTIVE'),
+                                         -> (106, 'Pooja Gupta', 'Delhi', 'Delhi', '9876543215', 'ACTIVE');
+Query OK, 6 rows affected (0.0140 sec)   -> (106, 'Pooja Gupta', 'Delhi', 'Delhi', '9876543215', 'ACTIVE');
+
+Records: 6  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT * FROM customers;
++-------------+---------------+---------+-------+------------+----------+
+| customer_id | customer_name | city    | state | phone      | status   |
++-------------+---------------+---------+-------+------------+----------+
+|         101 | Rahul Sharma  | Delhi   | Delhi | 9876543210 | ACTIVE   |
+|         102 | Amit Kumar    | Lucknow | UP    | 9876543211 | ACTIVE   |
+|         103 | Priya Singh   | Delhi   | Delhi | 9876543212 | ACTIVE   |
+|         104 | Neha Verma    | Kanpur  | UP    | 9876543213 | INACTIVE |
+|         105 | Arif Khan     | Lucknow | UP    | 9876543214 | ACTIVE   |
+|         106 | Pooja Gupta   | Delhi   | Delhi | 9876543215 | ACTIVE   |
++-------------+---------------+---------+-------+------------+----------+
+6 rows in set (0.0011 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > CREATE TABLE IF NOT EXISTS accounts (
+                                         ->     account_id INT PRIMARY KEY,
+                                         ->     customer_id INT,
+                                         ->     branch_id INT,
+                                         ->     account_type VARCHAR(20),
+                                         ->     balance DECIMAL(12,2),
+                                         ->     opening_date DATE,
+                                         ->     FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+                                         ->     FOREIGN KEY (branch_id) REFERENCES banking_data(branch_id)
+                                         -> );
+Query OK, 0 rows affected (0.0911 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT * FROM accounts;
+Empty set (0.0021 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > INSERT INTO accounts
+                                         -> (account_id, customer_id, branch_id, account_type, balance, opening_date)
+                                         -> VALUES
+                                         -> (1001, 101, 2, 'SAVING', 150000, '2024-01-10'),
+                                         -> (1002, 101, 3, 'CURRENT', 80000, '2024-03-15'),
+                                         -> (1003, 102, 2, 'SAVING', 75000, '2024-05-20'),
+                                         -> (1004, 103, 3, 'SAVING', 200000, '2023-08-12'),
+                                         -> (1005, 104, 4, 'CURRENT', 50000, '2024-02-18'),
+                                         -> (1006, 105, 5, 'SAVING', 125000, '2023-11-25'),
+                                         -> (1007, 106, 2, 'SAVING', 95000, '2024-06-10'),
+                                         -> (1008, 106, 2, 'CURRENT', 175000, '2024-07-15');
+Query OK, 8 rows affected (0.0079 sec)
+
+Records: 8  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT * FROM accounts;
++------------+-------------+-----------+--------------+-----------+--------------+
+| account_id | customer_id | branch_id | account_type | balance   | opening_date |
++------------+-------------+-----------+--------------+-----------+--------------+
+|       1001 |         101 |         2 | SAVING       | 150000.00 | 2024-01-10   |
+|       1002 |         101 |         3 | CURRENT      |  80000.00 | 2024-03-15   |
+|       1003 |         102 |         2 | SAVING       |  75000.00 | 2024-05-20   |
+|       1004 |         103 |         3 | SAVING       | 200000.00 | 2023-08-12   |
+|       1005 |         104 |         4 | CURRENT      |  50000.00 | 2024-02-18   |
+|       1006 |         105 |         5 | SAVING       | 125000.00 | 2023-11-25   |
+|       1007 |         106 |         2 | SAVING       |  95000.00 | 2024-06-10   |
+|       1008 |         106 |         2 | CURRENT      | 175000.00 | 2024-07-15   |
++------------+-------------+-----------+--------------+-----------+--------------+
+8 rows in set (0.0010 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > CREATE TABLE IF NOT EXISTS transactions (
+                                         ->     transaction_id INT PRIMARY KEY,
+                                         ->     customer_id INT,
+                                         ->     account_id INT,
+                                         ->     amount DECIMAL(12,2),
+                                         ->     mode VARCHAR(20),
+                                         ->     transaction_date DATE,
+                                         ->     FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+                                         ->     FOREIGN KEY (account_id) REFERENCES accounts(account_id)
+                                         -> );
+Query OK, 0 rows affected (0.0482 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > INSERT INTO transactions
+                                         -> (transaction_id, customer_id, account_id, amount, mode, transaction_date)
+                                         -> VALUES
+                                         -> (1, 101, 1001, 25000, 'ATM', '2025-01-10'),
+                                         -> (2, 101, 1002, 15000, 'UPI', '2025-01-15'),
+                                         -> (3, 102, 1003, 10000, 'ATM', '2025-02-01'),
+                                         -> (4, 103, 1004, 50000, 'NEFT', '2025-02-10'),
+                                         -> (5, 103, 1004, 20000, 'UPI', '2025-02-15'),
+                                         -> (6, 104, 1005, 5000, 'ATM', '2025-03-01'),
+                                         -> (7, 105, 1006, 30000, 'UPI', '2025-03-05'),
+                                         -> (8, 105, 1006, 25000, 'ATM', '2025-03-10'),
+                                         -> (9, 106, 1007, 40000, 'NEFT', '2025-03-15'),
+                                         -> (10, 106, 1008, 35000, 'UPI', '2025-03-20'),
+                                         -> (11, 101, 1001, 10000, 'ATM', '2025-04-01'),
+                                         -> (12, 103, 1004, 60000, 'NEFT', '2025-04-05');
+Query OK, 12 rows affected (0.0056 sec)
+
+Records: 12  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT * FROM transactions;
++----------------+-------------+------------+----------+------+------------------+
+| transaction_id | customer_id | account_id | amount   | mode | transaction_date |
++----------------+-------------+------------+----------+------+------------------+
+|              1 |         101 |       1001 | 25000.00 | ATM  | 2025-01-10       |
+|              2 |         101 |       1002 | 15000.00 | UPI  | 2025-01-15       |
+|              3 |         102 |       1003 | 10000.00 | ATM  | 2025-02-01       |
+|              4 |         103 |       1004 | 50000.00 | NEFT | 2025-02-10       |
+|              5 |         103 |       1004 | 20000.00 | UPI  | 2025-02-15       |
+|              6 |         104 |       1005 |  5000.00 | ATM  | 2025-03-01       |
+|              7 |         105 |       1006 | 30000.00 | UPI  | 2025-03-05       |
+|              8 |         105 |       1006 | 25000.00 | ATM  | 2025-03-10       |
+|              9 |         106 |       1007 | 40000.00 | NEFT | 2025-03-15       |
+|             10 |         106 |       1008 | 35000.00 | UPI  | 2025-03-20       |
+|             11 |         101 |       1001 | 10000.00 | ATM  | 2025-04-01       |
+|             12 |         103 |       1004 | 60000.00 | NEFT | 2025-04-05       |
++----------------+-------------+------------+----------+------+------------------+
+12 rows in set (0.0009 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > CREATE TABLE IF NOT EXISTS cards (
+                                         ->     card_id INT PRIMARY KEY,
+                                         ->     customer_id INT,
+                                         ->     card_type VARCHAR(20),
+                                         ->     card_status VARCHAR(20),
+                                         ->     FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+                                         -> );
+Query OK, 0 rows affected (0.0490 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > INSERT INTO cards
+                                         -> (card_id, customer_id, card_type, card_status)
+                                         -> VALUES
+                                         -> (501, 101, 'DEBIT', 'ACTIVE'),
+                                         -> (502, 102, 'DEBIT', 'ACTIVE'),
+                                         -> (503, 103, 'CREDIT', 'ACTIVE'),
+                                         -> (504, 105, 'DEBIT', 'ACTIVE');
+Query OK, 4 rows affected (0.0060 sec)
+
+Records: 4  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT * FROM cards;
++---------+-------------+-----------+-------------+
+| card_id | customer_id | card_type | card_status |
++---------+-------------+-----------+-------------+
+|     501 |         101 | DEBIT     | ACTIVE      |
+|     502 |         102 | DEBIT     | ACTIVE      |
+|     503 |         103 | CREDIT    | ACTIVE      |
+|     504 |         105 | DEBIT     | ACTIVE      |
++---------+-------------+-----------+-------------+
+4 rows in set (0.0009 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT *
+                                         -> FROM customers
+                                         -> WHERE status = 'ACTIVE';
++-------------+---------------+---------+-------+------------+--------+
+| customer_id | customer_name | city    | state | phone      | status |
++-------------+---------------+---------+-------+------------+--------+
+|         101 | Rahul Sharma  | Delhi   | Delhi | 9876543210 | ACTIVE |
+|         102 | Amit Kumar    | Lucknow | UP    | 9876543211 | ACTIVE |
+|         103 | Priya Singh   | Delhi   | Delhi | 9876543212 | ACTIVE |
+|         105 | Arif Khan     | Lucknow | UP    | 9876543214 | ACTIVE |
+|         106 | Pooja Gupta   | Delhi   | Delhi | 9876543215 | ACTIVE |
++-------------+---------------+---------+-------+------------+--------+
+5 rows in set (0.0023 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT *
+                                         -> FROM accounts
+                                         -> WHERE account_type = 'SAVING';
++------------+-------------+-----------+--------------+-----------+--------------+
+| account_id | customer_id | branch_id | account_type | balance   | opening_date |
++------------+-------------+-----------+--------------+-----------+--------------+
+|       1001 |         101 |         2 | SAVING       | 150000.00 | 2024-01-10   |
+|       1003 |         102 |         2 | SAVING       |  75000.00 | 2024-05-20   |
+|       1004 |         103 |         3 | SAVING       | 200000.00 | 2023-08-12   |
+|       1006 |         105 |         5 | SAVING       | 125000.00 | 2023-11-25   |
+|       1007 |         106 |         2 | SAVING       |  95000.00 | 2024-06-10   |
++------------+-------------+-----------+--------------+-----------+--------------+
+5 rows in set (0.0027 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT *
+                                         -> FROM accounts
+                                         -> WHERE balance > 100000;
++------------+-------------+-----------+--------------+-----------+--------------+
+| account_id | customer_id | branch_id | account_type | balance   | opening_date |
++------------+-------------+-----------+--------------+-----------+--------------+
+|       1001 |         101 |         2 | SAVING       | 150000.00 | 2024-01-10   |
+|       1004 |         103 |         3 | SAVING       | 200000.00 | 2023-08-12   |
+|       1006 |         105 |         5 | SAVING       | 125000.00 | 2023-11-25   |
+|       1008 |         106 |         2 | CURRENT      | 175000.00 | 2024-07-15   |
++------------+-------------+-----------+--------------+-----------+--------------+
+4 rows in set (0.0013 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT *
+                                         -> FROM transactions
+                                         -> WHERE mode = 'ATM';
++----------------+-------------+------------+----------+------+------------------+
+| transaction_id | customer_id | account_id | amount   | mode | transaction_date |
++----------------+-------------+------------+----------+------+------------------+
+|              1 |         101 |       1001 | 25000.00 | ATM  | 2025-01-10       |
+|              3 |         102 |       1003 | 10000.00 | ATM  | 2025-02-01       |
+|              6 |         104 |       1005 |  5000.00 | ATM  | 2025-03-01       |
+|              8 |         105 |       1006 | 25000.00 | ATM  | 2025-03-10       |
+|             11 |         101 |       1001 | 10000.00 | ATM  | 2025-04-01       |
++----------------+-------------+------------+----------+------+------------------+
+5 rows in set (0.0010 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT *
+                                         -> FROM customers
+                                         -> WHERE city = 'Delhi';
++-------------+---------------+-------+-------+------------+--------+
+| customer_id | customer_name | city  | state | phone      | status |
++-------------+---------------+-------+-------+------------+--------+
+|         101 | Rahul Sharma  | Delhi | Delhi | 9876543210 | ACTIVE |
+|         103 | Priya Singh   | Delhi | Delhi | 9876543212 | ACTIVE |
+|         106 | Pooja Gupta   | Delhi | Delhi | 9876543215 | ACTIVE |
++-------------+---------------+-------+-------+------------+--------+
+3 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT branch_id, SUM(balance) AS total_balance
+                                         -> FROM accounts
+                                         -> GROUP BY branch_id;
++-----------+---------------+
+| branch_id | total_balance |
++-----------+---------------+
+|         2 |     495000.00 |
+|         3 |     280000.00 |
+|         4 |      50000.00 |
+|         5 |     125000.00 |
++-----------+---------------+
+4 rows in set (0.0021 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT account_type, AVG(balance) AS average_balance
+                                         -> FROM accounts
+                                         -> GROUP BY account_type;
++--------------+-----------------+
+| account_type | average_balance |
++--------------+-----------------+
+| SAVING       |   129000.000000 |
+| CURRENT      |   101666.666667 |
++--------------+-----------------+
+2 rows in set (0.0019 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT customer_id, COUNT(*) AS account_count
+                                         -> FROM accounts
+                                         -> GROUP BY customer_id;
++-------------+---------------+
+| customer_id | account_count |
++-------------+---------------+
+|         101 |             2 |
+|         102 |             1 |
+|         103 |             1 |
+|         104 |             1 |
+|         105 |             1 |
+|         106 |             2 |
++-------------+---------------+
+6 rows in set (0.0014 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT customer_id, SUM(amount) AS total_amount
+                                         -> FROM transactions
+                                         -> GROUP BY customer_id;
++-------------+--------------+
+| customer_id | total_amount |
++-------------+--------------+
+|         101 |     50000.00 |
+|         102 |     10000.00 |
+|         103 |    130000.00 |
+|         104 |      5000.00 |
+|         105 |     55000.00 |
+|         106 |     75000.00 |
++-------------+--------------+
+6 rows in set (0.0009 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL > SELECT mode, SUM(amount) AS total_amount
+                                         -> FROM transactions
+                                         -> GROUP BY mode;
++------+--------------+
+| mode | total_amount |
++------+--------------+
+| ATM  |     75000.00 |
+| UPI  |    100000.00 |
+| NEFT |    150000.00 |
++------+--------------+
+3 rows in set (0.0010 sec)
+ MySQL  localhost:3306 ssl  himanshu  SQL >
